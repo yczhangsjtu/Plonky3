@@ -1,6 +1,7 @@
 [workspace]
 members = [
     "air",
+    "blake3",
     "brakedown",
     "challenger",
     "code",
