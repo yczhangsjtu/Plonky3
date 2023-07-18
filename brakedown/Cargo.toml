@@ -9,6 +9,8 @@ p3-code = { path = "../code" }
 p3-field = { path = "../field" }
 p3-lde = { path = "../lde" }
 p3-matrix = { path = "../matrix" }
+p3-goldilocks = { path = "../goldilocks" }
+p3-baby-bear = { path = "../baby-bear" }
 p3-mersenne-31 = { path = "../mersenne-31" }
 p3-reed-solomon = { path = "../reed-solomon" }
 rand = "0.8.5"
@@ -19,4 +21,8 @@ criterion = "0.4.0"
 
 [[bench]]
 name = "encode"
+harness = false
+
+[[bench]]
+name = "encode_baby_bear"
 harness = false
