@@ -24,6 +24,10 @@ impl BabyBear {
         Self { value: encode(value % P) }
     }
 
+    pub fn new_raw(value: u32) -> Self {
+        Self { value: value }
+    }
+
 
     /// Raise to a power of `n`.
     fn pow(self, n: usize) -> Self {

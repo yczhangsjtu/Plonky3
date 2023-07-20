@@ -1,3 +1,4 @@
+use core::time::Duration;
 use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion};
 use p3_brakedown::fast_registry;
 use p3_code::CodeOrFamily;
@@ -20,6 +21,7 @@ where
 {
     let mut group = c.benchmark_group(&format!("encode::<{}>", type_name::<F>()));
     group.sample_size(10);
+    group.measurement_time(Duration::from_secs(10));
 
     let mut rng = thread_rng();
     for n_log in [14, 16] {
