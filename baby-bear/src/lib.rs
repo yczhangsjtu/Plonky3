@@ -134,6 +134,59 @@ const fn mul(lhs: u32, rhs: u32) -> u32 {
     }
 }
 
+pub fn mul_for_test_1000(lhs: u32, rhs: u32) -> u32 {
+    let mut ret = lhs;
+    for _ in 0..1000 {
+        ret = mul(ret, rhs);
+    }
+    ret
+}
+
+pub fn mul_with_two_muls_1000(a: u32, b: u32) -> u32 {
+    let mut ret = a;
+    for _ in 0..1000 {
+        // uint64_t o64 = uint64_t(a) * uint64_t(b);
+        let mut o64: u64 = (ret as u64).wrapping_mul(b as u64);
+        // uint32_t low = -uint32_t(o64);
+        let _low: u32 = 0u32.wrapping_sub(o64 as u32);
+        // uint32_t red = M * low;
+        // let red = M; //.wrapping_mul(low);
+        // o64 += uint64_t(red) * uint64_t(P);
+        o64 += (M as u64).wrapping_mul(P_U64);
+        // uint32_t ret = o64 >> 32;
+        ret = (o64 >> 32) as u32;
+        // return (ret >= P ? ret - P : ret);
+        if ret >= P {
+            ret = ret - P;
+        }
+    }
+    ret
+}
+
+pub fn u32_mul_1000(lhs: u32, rhs: u32) -> u32 {
+    let mut ret = lhs;
+    for _ in 0..1000 {
+        ret = ret.wrapping_mul(rhs) + 1;
+    }
+    ret
+}
+
+pub fn u32_in_64_mul_1000(lhs: u32, rhs: u32) -> u64 {
+    let mut ret = lhs;
+    for _ in 0..1000 {
+        ret = ((ret as u64).wrapping_mul(rhs as u64) + 1) as u32;
+    }
+    ret as u64
+}
+
+pub fn u64_mul_1000(lhs: u64, rhs: u64) -> u64 {
+    let mut ret = lhs;
+    for _ in 0..1000 {
+        ret = ret.wrapping_mul(rhs) + 1;
+    }
+    ret
+}
+
 const M: u32 = 0x88000001;
 const R2: u32 = 1172168163;
 
@@ -228,6 +281,7 @@ impl PrimeField for BabyBear {}
 
 impl PrimeField32 for BabyBear {
     const ORDER_U32: u32 = (1 << 31) - (1 << 27) + 1;
+    const CHARACTERISTIC_TWO_ADICITY: u32 = 27;
 
     fn as_canonical_u32(&self) -> u32 {
         if self.value >= Self::ORDER_U32 {

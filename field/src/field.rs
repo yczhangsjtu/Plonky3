@@ -134,23 +134,67 @@ pub trait PrimeField: Field + Ord {}
 /// A prime field of order less than `2^64`.
 pub trait PrimeField64: PrimeField {
     const ORDER_U64: u64;
+    const CHARACTERISTIC_TWO_ADICITY: u64;
 
     fn bits() -> usize {
         log2_ceil_u64(Self::ORDER_U64) as usize
     }
 
     fn as_canonical_u64(&self) -> u64;
+
+
+    /// Compute the inverse of 2^exp in this field.
+    #[inline]
+    fn inverse_2exp(exp: usize) -> Self {
+        // Let p = char(F). Since 2^exp is in the prime subfield, i.e. an
+        // element of GF_p, its inverse must be as well. Thus we may add
+        // multiples of p without changing the result. In particular,
+        // 2^-exp = 2^-exp - p 2^-exp
+        //        = 2^-exp (1 - p)
+        //        = p - (p - 1) / 2^exp
+
+        // If this field's two adicity, t, is at least exp, then 2^exp divides
+        // p - 1, so this division can be done with a simple bit shift. If
+        // exp > t, we repeatedly multiply by 2^-t and reduce exp until it's in
+        // the right range.
+
+        let p = Self::ORDER_U64;
+        // NB: The only reason this is split into two cases is to save
+        // the multiplication (and possible calculation of
+        // inverse_2_pow_adicity) in the usual case that exp <=
+        // TWO_ADICITY. Can remove the branch and simplify if that
+        // saving isn't worth it.
+
+        if exp > Self::CHARACTERISTIC_TWO_ADICITY as usize {
+            // NB: This should be a compile-time constant
+            let inverse_2_pow_adicity: Self =
+                Self::from_canonical_u64(p - ((p - 1) >> Self::CHARACTERISTIC_TWO_ADICITY));
+
+            let mut res = inverse_2_pow_adicity;
+            let mut e = exp - Self::CHARACTERISTIC_TWO_ADICITY as usize;
+
+            while e > Self::CHARACTERISTIC_TWO_ADICITY as usize {
+                res *= inverse_2_pow_adicity;
+                e -= Self::CHARACTERISTIC_TWO_ADICITY as usize;
+            }
+            res * Self::from_canonical_u64(p - ((p - 1) >> e))
+        } else {
+            Self::from_canonical_u64(p - ((p - 1) >> exp))
+        }
+    }
 }
 
 /// A prime field of order less than `2^32`.
 pub trait PrimeField32: PrimeField64 {
     const ORDER_U32: u32;
+    const CHARACTERISTIC_TWO_ADICITY: u32;
 
     fn as_canonical_u32(&self) -> u32;
 }
 
 impl<F: PrimeField32> PrimeField64 for F {
     const ORDER_U64: u64 = <F as PrimeField32>::ORDER_U32 as u64;
+    const CHARACTERISTIC_TWO_ADICITY: u64 = <F as PrimeField32>::CHARACTERISTIC_TWO_ADICITY as u64;
 
     fn as_canonical_u64(&self) -> u64 {
         u64::from(self.as_canonical_u32())

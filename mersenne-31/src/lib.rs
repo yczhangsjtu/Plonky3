@@ -190,6 +190,7 @@ impl PrimeField for Mersenne31 {}
 
 impl PrimeField32 for Mersenne31 {
     const ORDER_U32: u32 = (1 << 31) - 1;
+    const CHARACTERISTIC_TWO_ADICITY: u32 = 1;
 
     fn as_canonical_u32(&self) -> u32 {
         // Since our invariant guarantees that `value` fits in 31 bits, there is only one possible

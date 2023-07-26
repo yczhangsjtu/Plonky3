@@ -26,3 +26,7 @@ harness = false
 [[bench]]
 name = "encode_baby_bear"
 harness = false
+
+[[bench]]
+name = "encode_goldilocks"
+harness = false

@@ -13,6 +13,9 @@ use p3_util::{assume, branch_hint};
 use rand::distributions::{Distribution, Standard};
 use rand::Rng;
 
+mod inversion;
+use inversion::try_inverse_u64;
+
 /// The prime field known as Goldilocks, defined as `F_p` where `p = 2^64 - 2^32 + 1`.
 #[derive(Copy, Clone, Default)]
 pub struct Goldilocks {
@@ -132,7 +135,7 @@ impl Field for Goldilocks {
     }
 
     fn try_inverse(&self) -> Option<Self> {
-        todo!()
+        try_inverse_u64(self)
     }
 }
 
@@ -140,6 +143,7 @@ impl PrimeField for Goldilocks {}
 
 impl PrimeField64 for Goldilocks {
     const ORDER_U64: u64 = 0xFFFF_FFFF_0000_0001;
+    const CHARACTERISTIC_TWO_ADICITY: u64 = 32;
 
     fn as_canonical_u64(&self) -> u64 {
         let mut c = self.value;
