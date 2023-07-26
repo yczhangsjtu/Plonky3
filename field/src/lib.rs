@@ -1,5 +1,5 @@
 //! A framework for finite fields.
-
+#![feature(min_specialization)]
 #![no_std]
 
 extern crate alloc;

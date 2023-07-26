@@ -8,3 +8,8 @@ license = "MIT OR Apache-2.0"
 p3-field = { path = "../field" }
 p3-matrix = { path = "../matrix" }
 p3-util = { path = "../util" }
+unroll = { version = "0.1.5", default-features = false }
+anyhow = { version = "1.0.40", default-features = false }
+itertools = { version = "0.11.0", default-features = false, features = ["use_alloc"] }
+serde = { version = "1.0", default-features = false, features = ["alloc", "derive"] }
+num = { version = "0.4", default-features = false, features = ["alloc", "rand"] }

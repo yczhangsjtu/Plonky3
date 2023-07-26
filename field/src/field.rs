@@ -61,6 +61,10 @@ pub trait AbstractField:
             current: Self::ONE,
         }
     }
+
+    fn coset_shift() -> Self {
+        Self::multiplicative_group_generator()
+    }
 }
 
 /// An `AbstractField` which abstracts the given field `F`.

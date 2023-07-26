@@ -1,8 +1,13 @@
 //! This crate contains a framework for low-degree tests (LDTs).
-
+#![feature(specialization)]
+#![allow(incomplete_features)]
 #![no_std]
 
 mod naive;
+mod fft;
+mod packed;
+mod packable;
+mod polynomial;
 
 pub use naive::*;
 

@@ -210,7 +210,7 @@ impl AbstractField for BabyBear {
         Self::new(u32::from(n))
     }
 
-    fn from_canonical_u16(n: u8) -> Self {
+    fn from_canonical_u16(n: u16) -> Self {
         Self::new(u32::from(n))
     }
 
@@ -248,6 +248,8 @@ impl AbstractField for BabyBear {
     fn multiplicative_group_generator() -> Self {
         Self::new(137)
     }
+
+    fn from_bool(_: bool) -> Self { todo!() }
 }
 
 impl Field for BabyBear {
