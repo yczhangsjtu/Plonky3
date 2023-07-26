@@ -1,5 +1,3 @@
-use p3_field::PrimeField32;
-use p3_field::PrimeField64;
 use p3_field::TwoAdicField;
 use alloc::vec::Vec;
 use core::cmp::{max, min};
@@ -52,12 +50,12 @@ fn fft_dispatch<F: Field + TwoAdicField>(
 }
 
 #[inline]
-pub fn fft<F: Field + TwoAdicField + PrimeField64 + PrimeField32>(poly: PolynomialCoeffs<F>) -> PolynomialValues<F> {
+pub fn fft<F: Field + TwoAdicField>(poly: PolynomialCoeffs<F>) -> PolynomialValues<F> {
     fft_with_options(poly, None, None)
 }
 
 #[inline]
-pub fn fft_with_options<F: Field + TwoAdicField + PrimeField32>(
+pub fn fft_with_options<F: Field + TwoAdicField>(
     poly: PolynomialCoeffs<F>,
     zero_factor: Option<usize>,
     root_table: Option<&FftRootTable<F>>,
@@ -68,11 +66,11 @@ pub fn fft_with_options<F: Field + TwoAdicField + PrimeField32>(
 }
 
 #[inline]
-pub fn ifft<F: Field + TwoAdicField + PrimeField32>(poly: PolynomialValues<F>) -> PolynomialCoeffs<F> {
+pub fn ifft<F: Field + TwoAdicField>(poly: PolynomialValues<F>) -> PolynomialCoeffs<F> {
     ifft_with_options(poly, None, None)
 }
 
-pub fn ifft_with_options<F: Field + TwoAdicField + PrimeField32>(
+pub fn ifft_with_options<F: Field + TwoAdicField>(
     poly: PolynomialValues<F>,
     zero_factor: Option<usize>,
     root_table: Option<&FftRootTable<F>>,

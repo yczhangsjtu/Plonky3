@@ -7,7 +7,7 @@ mod naive;
 mod fft;
 mod packed;
 mod packable;
-mod polynomial;
+pub mod polynomial;
 
 pub use naive::*;
 

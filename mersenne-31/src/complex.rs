@@ -1,4 +1,6 @@
+use rand::Rng;
 use core::fmt::{Display, Formatter};
+use rand::distributions::{Distribution, Standard};
 use core::iter::{Product, Sum};
 use core::ops::{Add, AddAssign, Div, Mul, MulAssign, Neg, Sub, SubAssign};
 
@@ -239,6 +241,12 @@ impl TwoAdicField for Mersenne31Complex<Mersenne31> {
             Mersenne31::new(1_166_849_849),
         )
     }
+
+    /// Compute the inverse of 2^exp in this field.
+    #[inline]
+    fn inverse_2exp(exp: usize) -> Self {
+        Self::new_real(Mersenne31::inverse_2exp(exp))
+    }
 }
 
 impl<AF: AbstractField + AbstractionOf<Mersenne31>> AbstractExtensionField<AF>
@@ -257,5 +265,12 @@ impl<AF: AbstractField + AbstractionOf<Mersenne31>> AbstractExtensionField<AF>
 
     fn as_base_slice(&self) -> &[AF] {
         &self.parts
+    }
+}
+
+
+impl Distribution<Mersenne31Complex<Mersenne31>> for Standard {
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Mersenne31Complex<Mersenne31> {
+        Mersenne31Complex::new(self.sample(rng), self.sample(rng))
     }
 }

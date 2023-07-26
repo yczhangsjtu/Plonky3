@@ -1,6 +1,5 @@
 pub(crate) mod division;
 
-use p3_field::PrimeField32;
 use p3_field::TwoAdicField;
 use alloc::vec;
 use alloc::vec::Vec;
@@ -20,11 +19,11 @@ use p3_field::Field;
 /// The points are implicitly `g^i`, where `g` generates the subgroup whose size equals the number
 /// of points.
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct PolynomialValues<F: Field + PrimeField32 + TwoAdicField> {
+pub struct PolynomialValues<F: Field + TwoAdicField> {
     pub values: Vec<F>,
 }
 
-impl<F: Field + TwoAdicField + PrimeField32> PolynomialValues<F> {
+impl<F: Field + TwoAdicField> PolynomialValues<F> {
     pub fn new(values: Vec<F>) -> Self {
         // Check that a subgroup exists of this size, which should be a power of two.
         debug_assert!(log2_strict_usize(values.len()) <= F::TWO_ADICITY);
@@ -106,7 +105,7 @@ impl<F: Field + TwoAdicField + PrimeField32> PolynomialValues<F> {
     }
 }
 
-impl<F: Field + TwoAdicField + p3_field::PrimeField32> From<Vec<F>> for PolynomialValues<F> {
+impl<F: Field + TwoAdicField> From<Vec<F>> for PolynomialValues<F> {
     fn from(values: Vec<F>) -> Self {
         Self::new(values)
     }
@@ -114,11 +113,11 @@ impl<F: Field + TwoAdicField + p3_field::PrimeField32> From<Vec<F>> for Polynomi
 
 /// A polynomial in coefficient form.
 #[derive(Clone, Debug)]
-pub struct PolynomialCoeffs<F: Field + TwoAdicField + PrimeField32> {
+pub struct PolynomialCoeffs<F: Field + TwoAdicField> {
     pub coeffs: Vec<F>,
 }
 
-impl<F: Field + TwoAdicField + PrimeField32> PolynomialCoeffs<F> {
+impl<F: Field + TwoAdicField> PolynomialCoeffs<F> {
     pub fn new(coeffs: Vec<F>) -> Self {
         PolynomialCoeffs { coeffs }
     }
@@ -271,7 +270,7 @@ impl<F: Field + TwoAdicField + PrimeField32> PolynomialCoeffs<F> {
     }
 }
 
-impl<F: Field + TwoAdicField + PrimeField32> PartialEq for PolynomialCoeffs<F> {
+impl<F: Field + TwoAdicField> PartialEq for PolynomialCoeffs<F> {
     fn eq(&self, other: &Self) -> bool {
         let max_terms = self.coeffs.len().max(other.coeffs.len());
         for i in 0..max_terms {
@@ -285,15 +284,15 @@ impl<F: Field + TwoAdicField + PrimeField32> PartialEq for PolynomialCoeffs<F> {
     }
 }
 
-impl<F: Field + TwoAdicField + PrimeField32> Eq for PolynomialCoeffs<F> {}
+impl<F: Field + TwoAdicField> Eq for PolynomialCoeffs<F> {}
 
-impl<F: Field + TwoAdicField + PrimeField32> From<Vec<F>> for PolynomialCoeffs<F> {
+impl<F: Field + TwoAdicField> From<Vec<F>> for PolynomialCoeffs<F> {
     fn from(coeffs: Vec<F>) -> Self {
         Self::new(coeffs)
     }
 }
 
-impl<F: Field + TwoAdicField + PrimeField32> Add for &PolynomialCoeffs<F> {
+impl<F: Field + TwoAdicField> Add for &PolynomialCoeffs<F> {
     type Output = PolynomialCoeffs<F>;
 
     fn add(self, rhs: Self) -> Self::Output {
@@ -305,13 +304,13 @@ impl<F: Field + TwoAdicField + PrimeField32> Add for &PolynomialCoeffs<F> {
     }
 }
 
-impl<F: Field + TwoAdicField + PrimeField32> Sum for PolynomialCoeffs<F> {
+impl<F: Field + TwoAdicField> Sum for PolynomialCoeffs<F> {
     fn sum<I: Iterator<Item = Self>>(iter: I) -> Self {
         iter.fold(Self::empty(), |acc, p| &acc + &p)
     }
 }
 
-impl<F: Field + TwoAdicField + PrimeField32> Sub for &PolynomialCoeffs<F> {
+impl<F: Field + TwoAdicField> Sub for &PolynomialCoeffs<F> {
     type Output = PolynomialCoeffs<F>;
 
     fn sub(self, rhs: Self) -> Self::Output {
@@ -324,7 +323,7 @@ impl<F: Field + TwoAdicField + PrimeField32> Sub for &PolynomialCoeffs<F> {
     }
 }
 
-impl<F: Field + TwoAdicField + PrimeField32> AddAssign for PolynomialCoeffs<F> {
+impl<F: Field + TwoAdicField> AddAssign for PolynomialCoeffs<F> {
     fn add_assign(&mut self, rhs: Self) {
         let len = max(self.len(), rhs.len());
         self.coeffs.resize(len, F::ZERO);
@@ -334,7 +333,7 @@ impl<F: Field + TwoAdicField + PrimeField32> AddAssign for PolynomialCoeffs<F> {
     }
 }
 
-impl<F: Field + TwoAdicField + PrimeField32> AddAssign<&Self> for PolynomialCoeffs<F> {
+impl<F: Field + TwoAdicField> AddAssign<&Self> for PolynomialCoeffs<F> {
     fn add_assign(&mut self, rhs: &Self) {
         let len = max(self.len(), rhs.len());
         self.coeffs.resize(len, F::ZERO);
@@ -344,7 +343,7 @@ impl<F: Field + TwoAdicField + PrimeField32> AddAssign<&Self> for PolynomialCoef
     }
 }
 
-impl<F: Field + TwoAdicField + PrimeField32> SubAssign for PolynomialCoeffs<F> {
+impl<F: Field + TwoAdicField> SubAssign for PolynomialCoeffs<F> {
     fn sub_assign(&mut self, rhs: Self) {
         let len = max(self.len(), rhs.len());
         self.coeffs.resize(len, F::ZERO);
@@ -354,7 +353,7 @@ impl<F: Field + TwoAdicField + PrimeField32> SubAssign for PolynomialCoeffs<F> {
     }
 }
 
-impl<F: Field + TwoAdicField + PrimeField32> SubAssign<&Self> for PolynomialCoeffs<F> {
+impl<F: Field + TwoAdicField> SubAssign<&Self> for PolynomialCoeffs<F> {
     fn sub_assign(&mut self, rhs: &Self) {
         let len = max(self.len(), rhs.len());
         self.coeffs.resize(len, F::ZERO);
@@ -364,7 +363,7 @@ impl<F: Field + TwoAdicField + PrimeField32> SubAssign<&Self> for PolynomialCoef
     }
 }
 
-impl<F: Field + TwoAdicField + PrimeField32> Mul<F> for &PolynomialCoeffs<F> {
+impl<F: Field + TwoAdicField> Mul<F> for &PolynomialCoeffs<F> {
     type Output = PolynomialCoeffs<F>;
 
     fn mul(self, rhs: F) -> Self::Output {
@@ -373,13 +372,13 @@ impl<F: Field + TwoAdicField + PrimeField32> Mul<F> for &PolynomialCoeffs<F> {
     }
 }
 
-impl<F: Field + TwoAdicField + PrimeField32> MulAssign<F> for PolynomialCoeffs<F> {
+impl<F: Field + TwoAdicField> MulAssign<F> for PolynomialCoeffs<F> {
     fn mul_assign(&mut self, rhs: F) {
         self.coeffs.iter_mut().for_each(|x| *x *= rhs);
     }
 }
 
-impl<F: Field + TwoAdicField + PrimeField32> Mul for &PolynomialCoeffs<F> {
+impl<F: Field + TwoAdicField> Mul for &PolynomialCoeffs<F> {
     type Output = PolynomialCoeffs<F>;
 
     #[allow(clippy::suspicious_arithmetic_impl)]

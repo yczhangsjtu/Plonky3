@@ -1,5 +1,4 @@
 use p3_field::TwoAdicField;
-use crate::polynomial::PrimeField32;
 use alloc::vec;
 use alloc::vec::Vec;
 
@@ -8,7 +7,7 @@ use p3_util::log2_ceil_usize;
 use crate::polynomial::PolynomialCoeffs;
 use p3_field::Field;
 
-impl<F: Field + TwoAdicField + PrimeField32> PolynomialCoeffs<F> {
+impl<F: Field + TwoAdicField> PolynomialCoeffs<F> {
     /// Polynomial division.
     /// Returns `(q, r)`, the quotient and remainder of the polynomial division of `a` by `b`.
     pub fn div_rem(&self, b: &Self) -> (Self, Self) {

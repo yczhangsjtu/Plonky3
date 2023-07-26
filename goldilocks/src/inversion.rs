@@ -1,3 +1,4 @@
+use p3_field::TwoAdicField;
 use p3_field::PrimeField64;
 
 /// This is a 'safe' iteration for the modular inversion algorithm. It
@@ -63,7 +64,7 @@ unsafe fn unsafe_iteration(f: &mut u64, g: &mut u64, c: &mut i128, d: &mut i128,
 /// Elliptic and Hyperelliptic Cryptography, Algorithms 11.6
 /// and 11.12.
 #[allow(clippy::many_single_char_names)]
-pub(crate) fn try_inverse_u64<F: PrimeField64>(x: &F) -> Option<F> {
+pub(crate) fn try_inverse_u64<F: PrimeField64 + TwoAdicField>(x: &F) -> Option<F> {
     let mut f = x.as_canonical_u64();
     let mut g = F::ORDER_U64;
     // NB: These two are very rarely such that their absolute

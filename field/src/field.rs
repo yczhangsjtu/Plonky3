@@ -155,47 +155,6 @@ pub trait PrimeField64: PrimeField {
     }
 
     fn as_canonical_u64(&self) -> u64;
-
-
-    /// Compute the inverse of 2^exp in this field.
-    #[inline]
-    fn inverse_2exp(exp: usize) -> Self {
-        // Let p = char(F). Since 2^exp is in the prime subfield, i.e. an
-        // element of GF_p, its inverse must be as well. Thus we may add
-        // multiples of p without changing the result. In particular,
-        // 2^-exp = 2^-exp - p 2^-exp
-        //        = 2^-exp (1 - p)
-        //        = p - (p - 1) / 2^exp
-
-        // If this field's two adicity, t, is at least exp, then 2^exp divides
-        // p - 1, so this division can be done with a simple bit shift. If
-        // exp > t, we repeatedly multiply by 2^-t and reduce exp until it's in
-        // the right range.
-
-        let p = Self::ORDER_U64;
-        // NB: The only reason this is split into two cases is to save
-        // the multiplication (and possible calculation of
-        // inverse_2_pow_adicity) in the usual case that exp <=
-        // TWO_ADICITY. Can remove the branch and simplify if that
-        // saving isn't worth it.
-
-        if exp > Self::CHARACTERISTIC_TWO_ADICITY as usize {
-            // NB: This should be a compile-time constant
-            let inverse_2_pow_adicity: Self =
-                Self::from_canonical_u64(p - ((p - 1) >> Self::CHARACTERISTIC_TWO_ADICITY));
-
-            let mut res = inverse_2_pow_adicity;
-            let mut e = exp - Self::CHARACTERISTIC_TWO_ADICITY as usize;
-
-            while e > Self::CHARACTERISTIC_TWO_ADICITY as usize {
-                res *= inverse_2_pow_adicity;
-                e -= Self::CHARACTERISTIC_TWO_ADICITY as usize;
-            }
-            res * Self::from_canonical_u64(p - ((p - 1) >> e))
-        } else {
-            Self::from_canonical_u64(p - ((p - 1) >> exp))
-        }
-    }
 }
 
 /// A prime field of order less than `2^32`.
@@ -272,6 +231,8 @@ pub trait TwoAdicField: Field {
         let base = Self::power_of_two_generator();
         base.mul_2exp_u64((Self::TWO_ADICITY - bits) as u64)
     }
+
+    fn inverse_2exp(exp: usize) -> Self;
 }
 
 /// An iterator over the powers of a certain base element `b`: `b^0, b^1, b^2, ...`.
